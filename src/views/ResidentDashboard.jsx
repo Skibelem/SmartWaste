@@ -1,7 +1,37 @@
 import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
 import { supabase } from '../lib/supabase';
 import ReportHistory from '../components/ReportHistory';
+
+// ── Fix Leaflet's broken default marker icons when bundled with Vite ─────────
+// Vite hashes asset filenames, so Leaflet can't resolve them via its internal
+// _getIconUrl logic. We override with explicit imported paths.
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: markerIcon2x,
+  iconUrl: markerIcon,
+  shadowUrl: markerShadow,
+});
+
+/**
+ * Invisible map child component that listens for click events and forwards
+ * the lat/lng back to the parent via the onSelect callback.
+ * Must be rendered inside a <MapContainer> so it has access to the map context.
+ */
+function LocationPicker({ onSelect }) {
+  useMapEvents({
+    click(e) {
+      onSelect(e.latlng);
+    },
+  });
+  return null;
+}
 
 /**
  * Primary view for residents.
@@ -312,8 +342,8 @@ export default function ResidentDashboard({ user, profile }) {
                 )}
               </button>
 
-              {/* Coordinates readout */}
-              {coords && geoStatus === 'success' && (
+              {/* Coordinates readout — shown for both GPS and manual map selection */}
+              {coords && (
                 <p className="mt-2 text-xs text-secondary font-mono bg-slate-50 border border-slate-100 rounded-lg px-3 py-2">
                   📍 {coords.latitude.toFixed(6)},&nbsp;{coords.longitude.toFixed(6)}
                 </p>
@@ -328,6 +358,51 @@ export default function ResidentDashboard({ user, profile }) {
                   {geoError}
                 </p>
               )}
+
+              {/* ── Manual map fallback ───────────────────────────────────── */}
+              <div className="mt-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex-1 h-px bg-slate-200" />
+                  <span className="text-xs text-slate-400 font-medium whitespace-nowrap">
+                    or select location manually on the map
+                  </span>
+                  <div className="flex-1 h-px bg-slate-200" />
+                </div>
+
+                <div
+                  className="rounded-xl overflow-hidden border border-slate-200 shadow-sm"
+                  style={{ height: '250px' }}
+                >
+                  <MapContainer
+                    center={[7.6212, 5.2215]}
+                    zoom={14}
+                    style={{ height: '100%', width: '100%' }}
+                    // Prevent the map scroll from hijacking the page scroll on mobile
+                    scrollWheelZoom={false}
+                  >
+                    <TileLayer
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors'
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    />
+                    {/* Listen for map clicks and update coords state */}
+                    <LocationPicker
+                      onSelect={(latlng) => {
+                        setCoords({ latitude: latlng.lat, longitude: latlng.lng });
+                        setGeoStatus('success');
+                        setGeoError('');
+                        if (submitError) setSubmitError('');
+                      }}
+                    />
+                    {/* Drop a marker wherever coords are set (GPS or manual) */}
+                    {coords && (
+                      <Marker position={[coords.latitude, coords.longitude]} />
+                    )}
+                  </MapContainer>
+                </div>
+                <p className="mt-1.5 text-xs text-slate-400 text-center">
+                  Tap anywhere on the map to drop a pin at that location
+                </p>
+              </div>
             </div>
 
             {/* Image upload */}
