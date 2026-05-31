@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+/* 1. Define custom brand colors for Tailwind v4 */
+@theme {
+  /* Backgrounds */
+  --color-background: #f8fafc;
+
+  /* Primary — Forest Green */
+  --color-primary:        #16a34a;
+  --color-primary-hover:  #15803d;
+  --color-primary-light:  #dcfce7;
+
+  /* Secondary — Slate Gray */
+  --color-secondary:       #64748b;
+  --color-secondary-hover: #475569;
+  --color-secondary-light: #f1f5f9;
+
+  /* Alert — Rose Red */
+  --color-alert:       #e11d48;
+  --color-alert-hover: #be123c;
+  --color-alert-light: #ffe4e6;
+}
+
+/* 2. Base layer styles */
+@layer base {
+  body {
+    @apply bg-background text-secondary antialiased;
+    font-family: 'Inter', 'Roboto', sans-serif;
+  }
+}
+
+/* 3. Glassmorphism utility helpers */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark-glass {
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 4. Custom premium input/button transitions */
+input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
