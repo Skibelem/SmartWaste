@@ -1,10 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabase';
 import AnalyticsPanel from '../components/AnalyticsPanel';
+import { motion, AnimatePresence } from 'framer-motion';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
 
 // ── Custom DivIcons (module scope — created once, not on every render) ────────
 // L.divIcon avoids Vite's asset-hashing issue with default marker PNG images.
@@ -70,15 +73,15 @@ function ReportCard({ report, isSelected, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-alert/30 ${
+      className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-green-500/30 ${
         isSelected
-          ? 'bg-alert/10 border-alert/40 shadow-md shadow-alert/10'
-          : 'bg-slate-800/60 border-slate-700/50 hover:bg-slate-700/50 hover:border-slate-600/60'
+          ? 'bg-green-600/20 border-green-500/50 shadow-md shadow-green-900/20'
+          : 'bg-[#0a2716]/30 border-green-900/20 hover:bg-green-900/30 hover:border-green-800/40'
       }`}
     >
       <div className="flex items-start gap-3">
         {/* Pending status dot */}
-        <span className="mt-1.5 h-2 w-2 rounded-full bg-alert flex-shrink-0 animate-pulse" />
+        <span className="mt-1.5 h-2 w-2 rounded-full bg-green-500 flex-shrink-0 animate-pulse" />
 
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium text-slate-200 line-clamp-2 leading-snug mb-1.5">
@@ -101,7 +104,7 @@ function ReportCard({ report, isSelected, onClick }) {
           strokeWidth={2}
           stroke="currentColor"
           className={`mt-0.5 w-4 h-4 flex-shrink-0 transition-colors ${
-            isSelected ? 'text-alert' : 'text-slate-600 group-hover:text-slate-400'
+            isSelected ? 'text-green-400' : 'text-slate-650 group-hover:text-slate-400'
           }`}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -114,7 +117,7 @@ function ReportCard({ report, isSelected, onClick }) {
           <img
             src={report.image_url}
             alt="Waste report thumbnail"
-            className="h-12 w-full rounded-lg object-cover border border-slate-700/50"
+            className="h-12 w-full rounded-lg object-cover border border-green-900/30"
           />
         </div>
       )}
@@ -127,7 +130,7 @@ function ReportCard({ report, isSelected, onClick }) {
 //   Mobile  : fixed bottom sheet (slides up from bottom)
 //   Desktop : absolute right panel within the map container (slides from right)
 
-function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchError }) {
+function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatchError }) {
   const date = report
     ? new Date(report.created_at).toLocaleDateString('en-GB', {
         weekday: 'short',
@@ -149,8 +152,8 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
         'w-full md:w-96',
         'max-h-[88vh] md:max-h-none',
         // ── Visual ───────────────────────────────────────────────────────────
-        'dark-glass',
-        'border-t border-white/10 md:border-t-0 md:border-l md:border-white/10',
+        'bg-[#0a2716]/60 backdrop-blur-xl',
+        'border-t border-green-800/40 md:border-t-0 md:border-l md:border-green-800/40',
         'shadow-2xl rounded-t-2xl md:rounded-none',
         // ── Scroll ────────────────────────────────────────────────────────────
         'overflow-y-auto',
@@ -176,25 +179,25 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
                 className="w-full h-52 object-cover"
               />
             ) : (
-              <div className="w-full h-36 bg-slate-800/90 flex flex-col items-center justify-center gap-2">
+              <div className="w-full h-36 bg-[#0a2716]/60 backdrop-blur-xl flex flex-col items-center justify-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-10 h-10 text-slate-600"
+                  className="w-10 h-10 text-green-700/60"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
-                <p className="text-xs text-slate-600 font-medium">No image attached</p>
+                <p className="text-xs text-green-700/80 font-medium">No image attached</p>
               </div>
             )}
 
             {/* Gradient overlay bar — status badge + close */}
             <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 bg-gradient-to-b from-black/65 to-transparent">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-alert/90 backdrop-blur-sm px-3 py-1 text-[10px] font-bold text-white uppercase tracking-wider shadow">
-                <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-950/80 border border-green-800/30 backdrop-blur-sm px-3 py-1 text-[10px] font-bold text-green-400 uppercase tracking-wider shadow">
+                <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
                 Pending
               </span>
               <button
@@ -210,7 +213,7 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
           </div>
 
           {/* ── Detail content ───────────────────────────────────────────── */}
-          <div className="p-5 space-y-5">
+          <div className="p-5 space-y-5 text-slate-100">
 
             {/* Description */}
             <div>
@@ -226,7 +229,7 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
 
             {/* Metadata cards */}
             <div className="space-y-2">
-              <div className="rounded-xl bg-slate-800/70 border border-slate-700/50 px-4 py-3">
+              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
                   Coordinates
                 </p>
@@ -235,14 +238,14 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
                 </p>
               </div>
 
-              <div className="rounded-xl bg-slate-800/70 border border-slate-700/50 px-4 py-3">
+              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
                   Submitted
                 </p>
                 <p className="text-sm text-slate-300">{date}</p>
               </div>
 
-              <div className="rounded-xl bg-slate-800/70 border border-slate-700/50 px-4 py-3">
+              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
                   Reporter ID
                 </p>
@@ -254,7 +257,7 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
 
             {/* Dispatch error */}
             {dispatchError && (
-              <div className="rounded-xl bg-alert/10 border border-alert/30 px-4 py-3 text-sm text-alert">
+              <div className="rounded-xl bg-rose-950/40 border border-rose-800/30 px-4 py-3 text-sm text-rose-350">
                 {dispatchError}
               </div>
             )}
@@ -263,10 +266,10 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
             <button
               id="dispatch-btn"
               onClick={onDispatch}
-              disabled={dispatching}
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-primary hover:bg-primary-hover px-4 py-4 text-sm font-semibold text-white shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/25 transition focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={isSubmitting}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-green-600 hover:bg-green-500 text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all border border-green-400/50 px-4 py-4 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {dispatching ? (
+              {isSubmitting ? (
                 <>
                   <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
@@ -303,12 +306,32 @@ function ReportDetailPanel({ report, onClose, onDispatch, dispatching, dispatchE
  */
 export default function AdminDashboard({ user, profile }) {
   const navigate = useNavigate();
+  const containerRef = useRef(null);
+
+  // ── GSAP mount animations sequence ────────────────────────────────────────
+  useGSAP(() => {
+    const tl = gsap.timeline();
+    tl.fromTo('.admin-map-panel', 
+      { opacity: 0, scale: 0.98 },
+      { opacity: 1, scale: 1, duration: 1, ease: 'power3.out' }
+    );
+    tl.fromTo('.admin-analytics-overlay',
+      { y: -40, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.8, ease: 'back.out(1.7)' },
+      0.2
+    );
+    tl.fromTo('.admin-sidebar',
+      { x: -40, opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.8, ease: 'power3.out' },
+      '>-0.4'
+    );
+  }, { scope: containerRef });
 
   // ── State ──────────────────────────────────────────────────────────────────
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedReport, setSelectedReport] = useState(null);
-  const [dispatching, setDispatching] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [dispatchError, setDispatchError] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -351,7 +374,7 @@ export default function AdminDashboard({ user, profile }) {
    */
   const handleDispatch = async () => {
     if (!selectedReport) return;
-    setDispatching(true);
+    setIsSubmitting(true);
     setDispatchError('');
 
     try {
@@ -370,7 +393,7 @@ export default function AdminDashboard({ user, profile }) {
     } catch (err) {
       setDispatchError(err.message || 'Dispatch failed. Please try again.');
     } finally {
-      setDispatching(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -381,14 +404,14 @@ export default function AdminDashboard({ user, profile }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col md:flex-row h-screen bg-slate-900 overflow-hidden">
+    <div ref={containerRef} className="flex flex-col md:flex-row h-screen bg-[#05150c] overflow-hidden">
 
       {/* ── Map panel ─────────────────────────────────────────────────────── */}
       {/* Mobile: top 320px  |  Desktop: right 70% of viewport height        */}
-      <div className="relative h-[320px] md:h-screen flex-shrink-0 md:flex-1 order-first md:order-last">
+      <div className="admin-map-panel relative h-[320px] md:h-screen flex-shrink-0 md:flex-1 order-first md:order-last shadow-[0_0_40px_rgba(22,163,74,0.1)] border border-green-900/50">
         
         {/* Floating Analytics Overlay */}
-        <div className="absolute top-4 left-4 right-4 md:top-8 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:max-w-4xl z-[1000] pointer-events-none">
+        <div className="admin-analytics-overlay absolute top-4 left-4 right-4 md:top-8 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:max-w-4xl z-[1000] pointer-events-none">
           <AnalyticsPanel refreshTrigger={refreshTrigger} />
         </div>
 
@@ -424,7 +447,7 @@ export default function AdminDashboard({ user, profile }) {
           report={selectedReport}
           onClose={handleClosePanel}
           onDispatch={handleDispatch}
-          dispatching={dispatching}
+          isSubmitting={isSubmitting}
           dispatchError={dispatchError}
         />
       </div>
@@ -432,35 +455,35 @@ export default function AdminDashboard({ user, profile }) {
       {/* ── Left sidebar ──────────────────────────────────────────────────── */}
       {/* Mobile: below map (flex-1 fills remaining height)                  */}
       {/* Desktop: left 30%, full viewport height, scrollable list           */}
-      <div className="flex flex-col flex-1 md:flex-none md:w-[30%] overflow-hidden border-t border-slate-800 md:border-t-0 md:border-r md:border-slate-700/50 order-last md:order-first">
+      <div className="admin-sidebar flex flex-col flex-1 md:flex-none md:w-[30%] overflow-hidden border-t border-green-950 md:border-t-0 md:border-r md:border-green-800/40 bg-[#0a2716]/60 backdrop-blur-xl border border-green-800/40 order-last md:order-first text-slate-100">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-slate-800/80 bg-slate-900/90">
+        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-green-950/80 bg-[#0a2716]/40 backdrop-blur-xl">
           {/* Top row: wordmark + admin badge + sign-out */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary shadow-md shadow-primary/30 flex-shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-600 shadow-md shadow-green-900/30 flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>
               </div>
               <div>
                 <h1 className="text-sm font-bold text-white leading-none tracking-tight">SmartWaste</h1>
-                <span className="text-[10px] font-semibold text-slate-500 tracking-widest uppercase">
+                <span className="text-[10px] font-semibold text-green-400 tracking-widest uppercase">
                   Command Center
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center rounded-full border border-rose-800/60 bg-rose-950/60 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-rose-400">
+              <span className="inline-flex items-center rounded-full border border-green-800/40 bg-green-950/40 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-400">
                 Admin
               </span>
               <button
                 id="admin-sign-out-btn"
                 onClick={handleSignOut}
                 title="Sign out"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-700 bg-slate-800/60 text-slate-400 hover:text-white hover:bg-slate-700 transition focus:outline-none focus:ring-2 focus:ring-slate-600"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-green-800/20 bg-green-950/40 text-green-400 hover:text-white hover:bg-green-900/40 transition focus:outline-none focus:ring-2 focus:ring-green-500"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
@@ -471,7 +494,7 @@ export default function AdminDashboard({ user, profile }) {
 
           {/* Bottom row: user name + live pending count */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-400">
               Signed in as{' '}
               <span className="font-semibold text-slate-300">
                 {profile?.full_name || 'Admin'}
@@ -481,12 +504,12 @@ export default function AdminDashboard({ user, profile }) {
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-colors ${
                   reports.length > 0
-                    ? 'bg-alert/15 text-alert border border-alert/25'
-                    : 'bg-slate-800 text-slate-500 border border-slate-700'
+                    ? 'bg-green-950/40 text-green-400 border border-green-800/30'
+                    : 'bg-[#0a2716]/30 text-green-500 border border-green-900/20'
                 }`}
               >
                 {reports.length > 0 && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-alert animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                 )}
                 {reports.length} Pending
               </span>
@@ -502,13 +525,11 @@ export default function AdminDashboard({ user, profile }) {
             [1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-xl bg-slate-800/60 border border-slate-700/50 p-3.5"
+                className="animate-pulse rounded-xl bg-green-950/20 border border-green-900/30 p-3.5"
               >
                 <div className="flex gap-3">
-                  <div className="mt-1.5 h-2 w-2 rounded-full bg-slate-700 flex-shrink-0" />
+                  <div className="mt-1.5 h-2 w-2 rounded-full bg-green-800/60 flex-shrink-0" />
                   <div className="flex-1 space-y-2.5">
-                    <div className="h-3 bg-slate-700 rounded w-full" />
-                    <div className="h-3 bg-slate-700 rounded w-3/4" />
                     <div className="h-2.5 bg-slate-800 rounded w-1/2" />
                   </div>
                 </div>
@@ -531,15 +552,25 @@ export default function AdminDashboard({ user, profile }) {
           )}
 
           {/* Report cards */}
-          {!loading &&
-            reports.map((report) => (
-              <ReportCard
-                key={report.id}
-                report={report}
-                isSelected={selectedReport?.id === report.id}
-                onClick={() => handleSelectReport(report)}
-              />
-            ))}
+          {!loading && (
+            <AnimatePresence>
+              {reports.map((report) => (
+                <motion.div
+                  key={report.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, x: -50, transition: { duration: 0.2 } }}
+                >
+                  <ReportCard
+                    report={report}
+                    isSelected={selectedReport?.id === report.id}
+                    onClick={() => handleSelectReport(report)}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          )}
         </div>
       </div>
     </div>
