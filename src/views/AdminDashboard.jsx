@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabase';
+import AnalyticsPanel from '../components/AnalyticsPanel';
 
 // ── Custom DivIcons (module scope — created once, not on every render) ────────
 // L.divIcon avoids Vite's asset-hashing issue with default marker PNG images.
@@ -309,6 +310,7 @@ export default function AdminDashboard({ user, profile }) {
   const [selectedReport, setSelectedReport] = useState(null);
   const [dispatching, setDispatching] = useState(false);
   const [dispatchError, setDispatchError] = useState('');
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // ── Fetch all pending reports on mount ────────────────────────────────────
   useEffect(() => {
@@ -360,9 +362,11 @@ export default function AdminDashboard({ user, profile }) {
 
       if (error) throw error;
 
-      // Optimistic UI — no re-fetch needed
+      // Optimistic UI — remove from local pending list
       setReports((prev) => prev.filter((r) => r.id !== selectedReport.id));
       setSelectedReport(null);
+      // Trigger analytics panel refresh
+      setRefreshTrigger((prev) => prev + 1);
     } catch (err) {
       setDispatchError(err.message || 'Dispatch failed. Please try again.');
     } finally {
@@ -382,6 +386,12 @@ export default function AdminDashboard({ user, profile }) {
       {/* ── Map panel ─────────────────────────────────────────────────────── */}
       {/* Mobile: top 320px  |  Desktop: right 70% of viewport height        */}
       <div className="relative h-[320px] md:h-screen flex-shrink-0 md:flex-1 order-first md:order-last">
+        
+        {/* Floating Analytics Overlay */}
+        <div className="absolute top-4 left-4 right-4 md:top-8 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:max-w-4xl z-[1000] pointer-events-none">
+          <AnalyticsPanel refreshTrigger={refreshTrigger} />
+        </div>
+
         <MapContainer
           center={[7.6212, 5.2215]}
           zoom={13}
