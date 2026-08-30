@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import ReportForm from '../components/ReportForm';
 import ReportHistory from '../components/ReportHistory';
+import EquipmentShop from '../components/EquipmentShop';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { motion, useMotionValue, useSpring } from 'framer-motion';
@@ -19,6 +20,9 @@ export default function ResidentDashboard({ user, profile }) {
 
   // ── Triggers ReportHistory to re-fetch after a successful submission ──────
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // ── Tab State ─────────────────────────────────────────────────────────────
+  const [activeTab, setActiveTab] = useState('report');
 
   // ── Handlers ──────────────────────────────────────────────────────────────
 
@@ -109,15 +113,41 @@ export default function ResidentDashboard({ user, profile }) {
             {profile?.full_name || 'Resident'} 👋
           </h2>
           <p className="text-slate-400 text-sm mt-1">
-            Help keep your community clean. Report a waste issue below and track your submissions.
+            Help keep your community clean. Report a waste issue or shop for equipment below.
           </p>
         </section>
 
-        {/* ── Report Form ───────────────────────────────────────────────── */}
-        <ReportForm user={user} onSuccess={() => setRefreshTrigger((n) => n + 1)} />
+        {/* ── Tabs ────────────────────────────────────────────────────── */}
+        <div className="flex bg-[#0a2716]/40 backdrop-blur-xl border border-green-800/30 rounded-2xl p-1 shadow-md">
+          <button
+            onClick={() => setActiveTab('report')}
+            className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition ${
+              activeTab === 'report' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200 hover:bg-green-900/30'
+            }`}
+          >
+            Report Waste
+          </button>
+          <button
+            onClick={() => setActiveTab('shop')}
+            className={`flex-1 py-2.5 text-sm font-bold rounded-xl transition ${
+              activeTab === 'shop' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200 hover:bg-green-900/30'
+            }`}
+          >
+            Equipment Shop
+          </button>
+        </div>
 
-        {/* ── Report History ────────────────────────────────────────────── */}
-        <ReportHistory userId={user.id} refreshTrigger={refreshTrigger} />
+        {activeTab === 'report' ? (
+          <>
+            {/* ── Report Form ───────────────────────────────────────────────── */}
+            <ReportForm user={user} onSuccess={() => setRefreshTrigger((n) => n + 1)} />
+
+            {/* ── Report History ────────────────────────────────────────────── */}
+            <ReportHistory userId={user.id} refreshTrigger={refreshTrigger} />
+          </>
+        ) : (
+          <EquipmentShop user={user} />
+        )}
 
       </div>
     </div>

@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabase';
 import AnalyticsPanel from '../components/AnalyticsPanel';
+import AdminOrders from '../components/AdminOrders';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -334,6 +335,7 @@ export default function AdminDashboard({ user, profile }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dispatchError, setDispatchError] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [activeTab, setActiveTab] = useState('waste');
 
   // ── Fetch all pending reports on mount ────────────────────────────────────
   useEffect(() => {
@@ -404,7 +406,33 @@ export default function AdminDashboard({ user, profile }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div ref={containerRef} className="flex flex-col md:flex-row h-screen bg-[#05150c] overflow-hidden">
+    <div ref={containerRef} className="flex flex-col h-screen bg-[#05150c] overflow-hidden">
+      
+      {/* ── Top Navigation Tabs ────────────────────────────────────────── */}
+      <div className="bg-[#0a2716]/80 backdrop-blur-md border-b border-green-900/50 flex justify-center p-3 z-[2000] shadow-md relative">
+        <div className="flex bg-[#05150c] border border-green-900/50 rounded-xl p-1 w-full max-w-sm">
+          <button
+            onClick={() => setActiveTab('waste')}
+            className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition ${
+              activeTab === 'waste' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Waste Ops
+          </button>
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition ${
+              activeTab === 'orders' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            Shop Orders
+          </button>
+        </div>
+      </div>
+
+      {activeTab === 'waste' ? (
+        <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
+
 
       {/* ── Map panel ─────────────────────────────────────────────────────── */}
       {/* Mobile: top 320px  |  Desktop: right 70% of viewport height        */}
@@ -573,6 +601,10 @@ export default function AdminDashboard({ user, profile }) {
           )}
         </div>
       </div>
+    </div>
+      ) : (
+        <AdminOrders />
+      )}
     </div>
   );
 }
