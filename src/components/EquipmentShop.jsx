@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { usePaystackPayment } from 'react-paystack';
+import PaystackPop from '@paystack/inline-js';
 import { formatCurrency } from '../lib/utils';
 
 export default function EquipmentShop({ user }) {
@@ -94,20 +94,26 @@ export default function EquipmentShop({ user }) {
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
-  // ── Paystack Configuration ──────────────────────────────────────────
-  const paystackConfig = {
-    email: user?.email || 'resident@smartwaste.com',
-    amount: Math.round(cartTotal * 100), // Amount in kobo (1 Naira = 100 kobo)
-    currency: 'NGN',
-    publicKey: import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || 'pk_test_dummy',
-  };
-  const initializePayment = usePaystackPayment(paystackConfig);
-
   // ── Checkout Flow ──────────────────────────────────────────────────
   const handleCheckout = async () => {
     if (cart.length === 0) return;
     setIsSubmitting(true);
     setOrderError('');
+
+    // Production safety check: Ensure Paystack public key is configured
+    const paystackPublicKey = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY;
+    if (!paystackPublicKey) {
+      setOrderError('Payment service is not configured. Please contact the administrator.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Production safety check: Ensure authenticated user email exists
+    if (!user?.email) {
+      setOrderError('Your account email is missing. Please ensure you are logged in with a valid email address.');
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       // 1. Draft the Order as "pending"
@@ -138,8 +144,13 @@ export default function EquipmentShop({ user }) {
 
       if (itemsError) throw itemsError;
 
-      // 3. Trigger Paystack Modal
-      initializePayment({
+      // 3. Trigger Paystack Inline JS Modal
+      const paystack = new PaystackPop();
+      paystack.newTransaction({
+        key: paystackPublicKey,
+        email: user.email,
+        amount: Math.round(cartTotal * 100), // Amount in kobo (1 Naira = 100 kobo)
+        currency: 'NGN',
         onSuccess: async (response) => {
           const reference = response.reference;
           // Update order to 'processing' and save reference
@@ -157,7 +168,7 @@ export default function EquipmentShop({ user }) {
           fetchMyOrders(); // Refresh order history
           setIsSubmitting(false);
         },
-        onClose: () => {
+        onCancel: () => {
           setIsSubmitting(false);
           setOrderError('Payment was cancelled. Your order is saved as pending in your history.');
           fetchMyOrders(); // Refresh history to show pending order
