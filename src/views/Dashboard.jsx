@@ -38,10 +38,14 @@ export default function Dashboard() {
         // PGRST116 means 0 rows returned (profile is completely missing)
         // Since we don't have a DB trigger, we'll auto-create it on first login using the metadata saved during registration
         if (error.code === 'PGRST116') {
+          // Security: auto-created profiles can only be resident or collector from metadata
+          const rawRole = user.user_metadata?.role;
+          const sanitizedRole = rawRole === 'collector' ? 'collector' : 'resident';
+
           const newProfile = {
             id: user.id,
             full_name: user.user_metadata?.full_name || 'SmartWaste User',
-            role: user.user_metadata?.role || 'resident',
+            role: sanitizedRole,
           };
           
           const { data: insertedData, error: insertError } = await supabase

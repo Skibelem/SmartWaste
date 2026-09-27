@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './views/Login';
 import Register from './views/Register';
+import AdminLogin from './views/AdminLogin';
 import Dashboard from './views/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -38,6 +39,8 @@ function AppRoutes() {
         {/* Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/admin-portal" element={<AdminLogin />} />
+        <Route path="/admin-login" element={<Navigate to="/admin-portal" replace />} />
 
         {/* Protected Routes */}
         <Route

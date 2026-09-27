@@ -33,7 +33,7 @@ ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE waste_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE collection_tasks ENABLE ROW LEVEL SECURITY;
 
--- 4. Enable automatic profile creation on user signup
+-- 4. Enable automatic profile creation on user signup (Strict role sanitization: admins cannot be created via public signup)
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 BEGIN
@@ -41,7 +41,10 @@ BEGIN
   VALUES (
     new.id,
     COALESCE(new.raw_user_meta_data->>'full_name', 'Anonymous User'),
-    COALESCE(new.raw_user_meta_data->>'role', 'resident')
+    CASE 
+      WHEN new.raw_user_meta_data->>'role' = 'collector' THEN 'collector'
+      ELSE 'resident'
+    END
   );
   RETURN new;
 END;

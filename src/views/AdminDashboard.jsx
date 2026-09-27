@@ -5,7 +5,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '../lib/supabase';
 import AnalyticsPanel from '../components/AnalyticsPanel';
-import AdminOrders from '../components/AdminOrders';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
@@ -74,23 +73,23 @@ function ReportCard({ report, isSelected, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-green-500/30 ${
+      className={`w-full text-left rounded-xl border p-3.5 transition-all duration-200 group focus:outline-none focus:ring-2 focus:ring-emerald-500/30 cursor-pointer ${
         isSelected
-          ? 'bg-green-600/20 border-green-500/50 shadow-md shadow-green-900/20'
-          : 'bg-[#0a2716]/30 border-green-900/20 hover:bg-green-900/30 hover:border-green-800/40'
+          ? 'bg-emerald-50 border-emerald-400 shadow-xs'
+          : 'bg-slate-50/80 border-slate-200/80 hover:bg-slate-100/90 hover:border-slate-300'
       }`}
     >
       <div className="flex items-start gap-3">
         {/* Pending status dot */}
-        <span className="mt-1.5 h-2 w-2 rounded-full bg-green-500 flex-shrink-0 animate-pulse" />
+        <span className="mt-1.5 h-2 w-2 rounded-full bg-emerald-600 flex-shrink-0 animate-pulse" />
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-slate-200 line-clamp-2 leading-snug mb-1.5">
+          <p className="text-sm font-semibold text-slate-800 line-clamp-2 leading-snug mb-1.5">
             {report.description || 'No description provided.'}
           </p>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
             <span className="text-xs text-slate-500">{date}</span>
-            <span className="text-slate-700 text-xs">·</span>
+            <span className="text-slate-400 text-xs">·</span>
             <span className="text-xs font-mono text-slate-500">
               {Number(report.latitude).toFixed(4)},&nbsp;{Number(report.longitude).toFixed(4)}
             </span>
@@ -105,7 +104,7 @@ function ReportCard({ report, isSelected, onClick }) {
           strokeWidth={2}
           stroke="currentColor"
           className={`mt-0.5 w-4 h-4 flex-shrink-0 transition-colors ${
-            isSelected ? 'text-green-400' : 'text-slate-650 group-hover:text-slate-400'
+            isSelected ? 'text-emerald-600' : 'text-slate-400 group-hover:text-slate-600'
           }`}
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -118,7 +117,7 @@ function ReportCard({ report, isSelected, onClick }) {
           <img
             src={report.image_url}
             alt="Waste report thumbnail"
-            className="h-12 w-full rounded-lg object-cover border border-green-900/30"
+            className="h-12 w-full rounded-lg object-cover border border-slate-200"
           />
         </div>
       )}
@@ -153,16 +152,12 @@ function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatch
         'w-full md:w-96',
         'max-h-[88vh] md:max-h-none',
         // ── Visual ───────────────────────────────────────────────────────────
-        'bg-[#0a2716]/60 backdrop-blur-xl',
-        'border-t border-green-800/40 md:border-t-0 md:border-l md:border-green-800/40',
+        'bg-white/95 backdrop-blur-xl',
+        'border-t border-slate-200 md:border-t-0 md:border-l md:border-slate-200',
         'shadow-2xl rounded-t-2xl md:rounded-none',
         // ── Scroll ────────────────────────────────────────────────────────────
         'overflow-y-auto',
         // ── Slide animation ───────────────────────────────────────────────────
-        // Mobile closed  : slides down  (translate-y-full)
-        // Mobile open    : translate-y-0
-        // Desktop closed : translate-y-0 + translate-x-full (slides right)
-        // Desktop open   : translate-x-0
         'transition-transform duration-300 ease-out',
         report
           ? 'translate-y-0 md:translate-x-0'
@@ -180,31 +175,31 @@ function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatch
                 className="w-full h-52 object-cover"
               />
             ) : (
-              <div className="w-full h-36 bg-[#0a2716]/60 backdrop-blur-xl flex flex-col items-center justify-center gap-2">
+              <div className="w-full h-36 bg-slate-100 flex flex-col items-center justify-center gap-2 border-b border-slate-200">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-10 h-10 text-green-700/60"
+                  className="w-10 h-10 text-slate-400"
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                 </svg>
-                <p className="text-xs text-green-700/80 font-medium">No image attached</p>
+                <p className="text-xs text-slate-500 font-medium">No image attached</p>
               </div>
             )}
 
             {/* Gradient overlay bar — status badge + close */}
-            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 bg-gradient-to-b from-black/65 to-transparent">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-green-950/80 border border-green-800/30 backdrop-blur-sm px-3 py-1 text-[10px] font-bold text-green-400 uppercase tracking-wider shadow">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse" />
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-3 bg-gradient-to-b from-black/60 to-transparent">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/90 border border-slate-200 px-3 py-1 text-[10px] font-bold text-emerald-700 uppercase tracking-wider shadow-xs">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
                 Pending
               </span>
               <button
                 onClick={onClose}
                 aria-label="Close detail panel"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/20 text-white hover:bg-black/65 transition"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/20 text-white hover:bg-black/65 transition cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -214,43 +209,43 @@ function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatch
           </div>
 
           {/* ── Detail content ───────────────────────────────────────────── */}
-          <div className="p-5 space-y-5 text-slate-100">
+          <div className="p-5 space-y-5 text-slate-800">
 
             {/* Description */}
             <div>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1.5">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">
                 Description
               </p>
-              <p className="text-sm text-slate-200 leading-relaxed">
+              <p className="text-sm text-slate-800 leading-relaxed font-semibold">
                 {report.description || (
-                  <em className="text-slate-500">No description provided.</em>
+                  <em className="text-slate-400 font-normal">No description provided.</em>
                 )}
               </p>
             </div>
 
             {/* Metadata cards */}
             <div className="space-y-2">
-              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+              <div className="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                   Coordinates
                 </p>
-                <p className="text-sm font-mono text-slate-300">
+                <p className="text-sm font-mono text-slate-700">
                   {Number(report.latitude).toFixed(6)},&nbsp;{Number(report.longitude).toFixed(6)}
                 </p>
               </div>
 
-              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+              <div className="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                   Submitted
                 </p>
-                <p className="text-sm text-slate-300">{date}</p>
+                <p className="text-sm text-slate-700">{date}</p>
               </div>
 
-              <div className="rounded-xl bg-[#0a2716]/40 border border-green-800/30 px-4 py-3">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-1">
+              <div className="rounded-xl bg-slate-50 border border-slate-200 px-4 py-3">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">
                   Reporter ID
                 </p>
-                <p className="text-xs font-mono text-slate-400 break-all">
+                <p className="text-xs font-mono text-slate-500 break-all">
                   {report.reporter_id}
                 </p>
               </div>
@@ -258,7 +253,7 @@ function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatch
 
             {/* Dispatch error */}
             {dispatchError && (
-              <div className="rounded-xl bg-rose-950/40 border border-rose-800/30 px-4 py-3 text-sm text-rose-350">
+              <div className="rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 text-sm text-rose-700 shadow-xs">
                 {dispatchError}
               </div>
             )}
@@ -268,11 +263,11 @@ function ReportDetailPanel({ report, onClose, onDispatch, isSubmitting, dispatch
               id="dispatch-btn"
               onClick={onDispatch}
               disabled={isSubmitting}
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-green-600 hover:bg-green-500 text-white shadow-[0_0_15px_rgba(22,163,74,0.3)] transition-all border border-green-400/50 px-4 py-4 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-green-500/40 disabled:opacity-60 disabled:cursor-not-allowed"
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/20 transition-all px-4 py-3.5 text-sm font-semibold focus:outline-none disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
             >
               {isSubmitting ? (
                 <>
-                  <svg className="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                  <svg className="h-4 w-4 animate-spin text-white" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
@@ -335,7 +330,6 @@ export default function AdminDashboard({ user, profile }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dispatchError, setDispatchError] = useState('');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
-  const [activeTab, setActiveTab] = useState('waste');
 
   // ── Fetch all pending reports on mount ────────────────────────────────────
   useEffect(() => {
@@ -406,37 +400,11 @@ export default function AdminDashboard({ user, profile }) {
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
-    <div ref={containerRef} className="flex flex-col h-screen bg-[#05150c] overflow-hidden">
-      
-      {/* ── Top Navigation Tabs ────────────────────────────────────────── */}
-      <div className="bg-[#0a2716]/80 backdrop-blur-md border-b border-green-900/50 flex justify-center p-3 z-[2000] shadow-md relative">
-        <div className="flex bg-[#05150c] border border-green-900/50 rounded-xl p-1 w-full max-w-sm">
-          <button
-            onClick={() => setActiveTab('waste')}
-            className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition ${
-              activeTab === 'waste' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Waste Ops
-          </button>
-          <button
-            onClick={() => setActiveTab('orders')}
-            className={`flex-1 py-1.5 text-sm font-bold rounded-lg transition ${
-              activeTab === 'orders' ? 'bg-green-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'
-            }`}
-          >
-            Shop Orders
-          </button>
-        </div>
-      </div>
-
-      {activeTab === 'waste' ? (
-        <div className="flex flex-col md:flex-row flex-1 overflow-hidden relative">
-
+    <div ref={containerRef} className="flex flex-col md:flex-row h-screen bg-[#f2f6f3] overflow-hidden relative">
 
       {/* ── Map panel ─────────────────────────────────────────────────────── */}
       {/* Mobile: top 320px  |  Desktop: right 70% of viewport height        */}
-      <div className="admin-map-panel relative h-[320px] md:h-screen flex-shrink-0 md:flex-1 order-first md:order-last shadow-[0_0_40px_rgba(22,163,74,0.1)] border border-green-900/50">
+      <div className="admin-map-panel relative h-[320px] md:h-screen flex-shrink-0 md:flex-1 order-first md:order-last border-b md:border-b-0 md:border-l border-slate-200 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
         
         {/* Floating Analytics Overlay */}
         <div className="admin-analytics-overlay absolute top-4 left-4 right-4 md:top-8 md:left-1/2 md:-translate-x-1/2 md:w-[90%] md:max-w-4xl z-[1000] pointer-events-none">
@@ -449,10 +417,10 @@ export default function AdminDashboard({ user, profile }) {
           style={{ height: '100%', width: '100%' }}
           scrollWheelZoom={false}
         >
-          {/* CartoDB Dark Matter tiles — premium look for command center UI */}
+          {/* CartoDB Voyager tiles — crisp modern light maps */}
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener noreferrer">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
             maxZoom={19}
           />
 
@@ -483,35 +451,35 @@ export default function AdminDashboard({ user, profile }) {
       {/* ── Left sidebar ──────────────────────────────────────────────────── */}
       {/* Mobile: below map (flex-1 fills remaining height)                  */}
       {/* Desktop: left 30%, full viewport height, scrollable list           */}
-      <div className="admin-sidebar flex flex-col flex-1 md:flex-none md:w-[30%] overflow-hidden border-t border-green-950 md:border-t-0 md:border-r md:border-green-800/40 bg-[#0a2716]/60 backdrop-blur-xl border border-green-800/40 order-last md:order-first text-slate-100">
+      <div className="admin-sidebar flex flex-col flex-1 md:flex-none md:w-[32%] lg:w-[28%] overflow-hidden border-t md:border-t-0 md:border-r border-slate-200 bg-white/95 backdrop-blur-xl order-last md:order-first text-slate-800 shadow-sm">
 
         {/* ── Header ──────────────────────────────────────────────────────── */}
-        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-green-950/80 bg-[#0a2716]/40 backdrop-blur-xl">
+        <div className="flex-shrink-0 px-5 pt-5 pb-4 border-b border-slate-100 bg-white/90 backdrop-blur-xl">
           {/* Top row: wordmark + admin badge + sign-out */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-600 shadow-md shadow-green-900/30 flex-shrink-0">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-600 shadow-md shadow-emerald-600/20 flex-shrink-0">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-[18px] h-[18px] text-white">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-sm font-bold text-white leading-none tracking-tight">SmartWaste</h1>
-                <span className="text-[10px] font-semibold text-green-400 tracking-widest uppercase">
+                <h1 className="text-sm font-bold text-slate-900 leading-none tracking-tight">SmartWaste</h1>
+                <span className="text-[10px] font-semibold text-emerald-600 tracking-widest uppercase">
                   Command Center
                 </span>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="inline-flex items-center rounded-full border border-green-800/40 bg-green-950/40 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-green-400">
+              <span className="inline-flex items-center rounded-full border border-slate-200 bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-700">
                 Admin
               </span>
               <button
                 id="admin-sign-out-btn"
                 onClick={handleSignOut}
                 title="Sign out"
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-green-800/20 bg-green-950/40 text-green-400 hover:text-white hover:bg-green-900/40 transition focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
@@ -522,9 +490,9 @@ export default function AdminDashboard({ user, profile }) {
 
           {/* Bottom row: user name + live pending count */}
           <div className="flex items-center justify-between">
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-500">
               Signed in as{' '}
-              <span className="font-semibold text-slate-300">
+              <span className="font-semibold text-slate-900">
                 {profile?.full_name || 'Admin'}
               </span>
             </p>
@@ -532,12 +500,12 @@ export default function AdminDashboard({ user, profile }) {
               <span
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-colors ${
                   reports.length > 0
-                    ? 'bg-green-950/40 text-green-400 border border-green-800/30'
-                    : 'bg-[#0a2716]/30 text-green-500 border border-green-900/20'
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-slate-100 text-slate-600 border border-slate-200'
                 }`}
               >
                 {reports.length > 0 && (
-                  <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 animate-pulse" />
                 )}
                 {reports.length} Pending
               </span>
@@ -553,12 +521,12 @@ export default function AdminDashboard({ user, profile }) {
             [1, 2, 3, 4].map((i) => (
               <div
                 key={i}
-                className="animate-pulse rounded-xl bg-green-950/20 border border-green-900/30 p-3.5"
+                className="animate-pulse rounded-xl bg-slate-100 border border-slate-200/80 p-3.5"
               >
                 <div className="flex gap-3">
-                  <div className="mt-1.5 h-2 w-2 rounded-full bg-green-800/60 flex-shrink-0" />
+                  <div className="mt-1.5 h-2 w-2 rounded-full bg-emerald-600/40 flex-shrink-0" />
                   <div className="flex-1 space-y-2.5">
-                    <div className="h-2.5 bg-slate-800 rounded w-1/2" />
+                    <div className="h-2.5 bg-slate-200 rounded w-1/2" />
                   </div>
                 </div>
               </div>
@@ -567,13 +535,13 @@ export default function AdminDashboard({ user, profile }) {
           {/* Empty state */}
           {!loading && reports.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full min-h-[200px] py-10 text-center px-6">
-              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-800 border border-slate-700 mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-slate-600">
+              <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-100 border border-slate-200 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-slate-400">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <p className="text-sm font-semibold text-slate-400 mb-1">All clear!</p>
-              <p className="text-xs text-slate-600 leading-relaxed max-w-[180px]">
+              <p className="text-sm font-semibold text-slate-800 mb-1">All clear!</p>
+              <p className="text-xs text-slate-500 leading-relaxed max-w-[180px]">
                 No pending reports right now. The map will update as residents submit new reports.
               </p>
             </div>
@@ -601,10 +569,6 @@ export default function AdminDashboard({ user, profile }) {
           )}
         </div>
       </div>
-    </div>
-      ) : (
-        <AdminOrders />
-      )}
     </div>
   );
 }

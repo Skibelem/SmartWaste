@@ -173,42 +173,42 @@ export default function ReportForm({ user, onSuccess }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
     >
-      <Card className="bg-[#0a2716]/40 backdrop-blur-xl border border-green-800/30 text-slate-100 shadow-2xl overflow-hidden">
-        <CardHeader className="flex flex-row items-center gap-3 pb-4">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-950/40 text-green-400 border border-green-800/30 flex-shrink-0">
+      <Card className="bg-white/90 backdrop-blur-xl border border-emerald-900/10 text-slate-800 shadow-[0_8px_30px_rgba(0,0,0,0.04)] overflow-hidden rounded-2xl">
+        <CardHeader className="flex flex-row items-center gap-3 pb-4 border-b border-slate-100">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200 flex-shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <div>
-            <CardTitle className="text-lg font-bold text-slate-100 leading-none">Report Waste</CardTitle>
-            <CardDescription className="text-xs text-slate-400 mt-0.5">Fill in the details below to submit a new report</CardDescription>
+            <CardTitle className="text-lg font-bold text-slate-900 leading-none">Report Waste</CardTitle>
+            <CardDescription className="text-xs text-slate-500 mt-0.5">Fill in the details below to submit a new report</CardDescription>
           </div>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="pt-6">
           <form id="report-waste-form" onSubmit={handleSubmit} className="space-y-5">
             {/* Success banner */}
             {submitSuccess && (
-              <div className="rounded-xl bg-green-950/40 border border-green-800/60 p-4 flex items-start gap-3 text-sm text-green-300">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 flex-shrink-0 mt-0.5 text-green-400">
+              <div className="rounded-xl bg-emerald-50 border border-emerald-200 p-4 flex items-start gap-3 text-sm text-emerald-800 shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 flex-shrink-0 mt-0.5 text-emerald-600">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>
                   <strong>Report submitted!</strong> Your waste report has been logged as{' '}
-                  <span className="inline-flex items-center gap-1 font-semibold text-emerald-400">
-                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
+                  <span className="inline-flex items-center gap-1 font-semibold text-emerald-700">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-600 inline-block animate-pulse" />
                     pending
                   </span>{' '}
-                  and will be reviewed by our team shortly.
+                  and will be reviewed by our dispatch team shortly.
                 </span>
               </div>
             )}
 
             {/* Error banner */}
             {submitError && (
-              <div className="rounded-xl bg-rose-950/40 border border-rose-800/60 p-4 flex items-start gap-3 text-sm text-rose-300">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-400">
+              <div className="rounded-xl bg-rose-50 border border-rose-200 p-4 flex items-start gap-3 text-sm text-rose-700 shadow-xs">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5 flex-shrink-0 mt-0.5 text-rose-600">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
                 <span>{submitError}</span>
@@ -217,7 +217,7 @@ export default function ReportForm({ user, onSuccess }) {
 
             {/* Description */}
             <motion.div whileHover={{ x: 2 }} className="space-y-1.5">
-              <Label htmlFor="report-description" className="text-sm font-semibold text-slate-200">
+              <Label htmlFor="report-description" className="text-sm font-semibold text-slate-700">
                 Description <span className="text-rose-500 text-xs">*</span>
               </Label>
               <Textarea
@@ -231,13 +231,13 @@ export default function ReportForm({ user, onSuccess }) {
                   if (submitError) setSubmitError('');
                 }}
                 placeholder="Describe the waste issue — e.g. overflowing bin at Block C entrance, illegal dumping near car park..."
-                className="bg-slate-950/50 border-slate-800 text-slate-100 placeholder-slate-500 focus-visible:ring-green-500 focus-visible:border-green-500 resize-none rounded-xl"
+                className="bg-slate-50/80 border-slate-300 text-slate-900 placeholder:text-slate-400 focus:bg-white focus-visible:ring-emerald-500 focus-visible:border-emerald-500 resize-none rounded-xl"
               />
             </motion.div>
 
             {/* Geolocation capture */}
             <motion.div whileHover={{ x: 2 }} className="space-y-1.5">
-              <Label className="text-sm font-semibold text-slate-200">
+              <Label className="text-sm font-semibold text-slate-700">
                 Location <span className="text-rose-500 text-xs">*</span>
               </Label>
 
@@ -247,19 +247,19 @@ export default function ReportForm({ user, onSuccess }) {
                 variant="outline"
                 onClick={handleCaptureLocation}
                 disabled={geoStatus === 'loading' || geoStatus === 'success'}
-                className={`w-full justify-center gap-2.5 rounded-xl border font-semibold shadow-sm transition focus-visible:ring-green-500 focus-visible:border-green-500
+                className={`w-full justify-center gap-2.5 rounded-xl border font-semibold shadow-xs transition focus-visible:ring-emerald-500 focus-visible:border-emerald-500 cursor-pointer
                   ${geoStatus === 'success'
-                    ? 'bg-green-950/20 border-green-800 text-green-400 hover:bg-green-950/20 cursor-default'
+                    ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-50 cursor-default'
                     : geoStatus === 'error'
-                    ? 'bg-rose-950/20 border-rose-800 text-rose-400 hover:bg-rose-900/30 cursor-pointer'
+                    ? 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100 cursor-pointer'
                     : geoStatus === 'loading'
-                    ? 'bg-slate-900/40 border-slate-800 text-slate-400 cursor-wait'
-                    : 'bg-slate-950/40 border-slate-800 text-slate-200 hover:bg-slate-900/60 hover:text-white cursor-pointer'
+                    ? 'bg-slate-100 border-slate-300 text-slate-500 cursor-wait'
+                    : 'bg-slate-100 hover:bg-slate-200 border-slate-300 text-slate-700 hover:text-slate-900 cursor-pointer'
                   }`}
               >
                 {geoStatus === 'loading' && (
                   <>
-                    <svg className="h-4 w-4 animate-spin text-green-500" fill="none" viewBox="0 0 24 24">
+                    <svg className="h-4 w-4 animate-spin text-emerald-600" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                     </svg>
@@ -268,7 +268,7 @@ export default function ReportForm({ user, onSuccess }) {
                 )}
                 {geoStatus === 'success' && (
                   <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-green-500">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4 text-emerald-600">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Location Captured
@@ -276,7 +276,7 @@ export default function ReportForm({ user, onSuccess }) {
                 )}
                 {(geoStatus === 'idle' || geoStatus === 'error') && (
                   <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-slate-600">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                     </svg>
@@ -287,14 +287,14 @@ export default function ReportForm({ user, onSuccess }) {
 
               {/* Coordinates readout */}
               {coords && (
-                <p className="mt-2 text-xs text-slate-400 font-mono bg-slate-950/60 border border-slate-800 rounded-lg px-3 py-2">
+                <p className="mt-2 text-xs text-slate-600 font-mono bg-slate-100 border border-slate-200 rounded-lg px-3 py-2">
                   📍 {coords.latitude.toFixed(6)},&nbsp;{coords.longitude.toFixed(6)}
                 </p>
               )}
 
               {/* Geo error message */}
               {geoStatus === 'error' && geoError && (
-                <p className="mt-2 text-xs text-rose-400 flex items-start gap-1.5">
+                <p className="mt-2 text-xs text-rose-600 flex items-start gap-1.5">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5 flex-shrink-0 mt-0.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                   </svg>
@@ -305,15 +305,15 @@ export default function ReportForm({ user, onSuccess }) {
               {/* Manual map fallback */}
               <div className="mt-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="flex-1 h-px bg-slate-850" />
-                  <span className="text-xs text-slate-450 font-medium whitespace-nowrap">
+                  <div className="flex-1 h-px bg-slate-200" />
+                  <span className="text-xs text-slate-500 font-medium whitespace-nowrap">
                     or select location manually on the map
                   </span>
-                  <div className="flex-1 h-px bg-slate-850" />
+                  <div className="flex-1 h-px bg-slate-200" />
                 </div>
 
                 <div
-                  className="rounded-xl overflow-hidden border border-slate-800 shadow-sm"
+                  className="rounded-xl overflow-hidden border border-slate-300 shadow-xs"
                   style={{ height: '250px' }}
                 >
                   <MapContainer
@@ -339,7 +339,7 @@ export default function ReportForm({ user, onSuccess }) {
                     )}
                   </MapContainer>
                 </div>
-                <p className="mt-1.5 text-xs text-slate-450 text-center">
+                <p className="mt-1.5 text-xs text-slate-500 text-center">
                   Tap anywhere on the map to drop a pin at that location
                 </p>
               </div>
@@ -347,7 +347,7 @@ export default function ReportForm({ user, onSuccess }) {
 
             {/* Image upload */}
             <motion.div whileHover={{ x: 2 }} className="space-y-1.5">
-              <Label className="text-sm font-semibold text-slate-200">
+              <Label className="text-sm font-semibold text-slate-700">
                 Photo{' '}
                 <span className="text-slate-400 font-normal text-xs">(optional)</span>
               </Label>
@@ -356,15 +356,15 @@ export default function ReportForm({ user, onSuccess }) {
                 /* Drop zone */
                 <label
                   htmlFor="image-upload"
-                  className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-slate-800 bg-slate-950/40 hover:bg-slate-900/40 hover:border-green-800/40 transition-all cursor-pointer group"
+                  className="flex flex-col items-center justify-center w-full h-32 rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/60 hover:bg-emerald-50/40 hover:border-emerald-400 transition-all cursor-pointer group"
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-slate-600 group-hover:text-green-500/60 transition mb-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-slate-400 group-hover:text-emerald-600 transition mb-2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
                   </svg>
-                  <p className="text-sm text-slate-450 group-hover:text-slate-300 transition font-medium">
+                  <p className="text-sm text-slate-600 group-hover:text-emerald-700 transition font-medium">
                     Click to upload a photo
                   </p>
-                  <p className="text-xs text-slate-500 mt-0.5">JPG, PNG, WEBP — max 10 MB</p>
+                  <p className="text-xs text-slate-400 mt-0.5">JPG, PNG, WEBP — max 10 MB</p>
                   <Input
                     id="image-upload"
                     ref={fileInputRef}
@@ -376,13 +376,13 @@ export default function ReportForm({ user, onSuccess }) {
                 </label>
               ) : (
                 /* Preview */
-                <div className="relative rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-sm">
+                <div className="relative rounded-xl overflow-hidden border border-slate-300 bg-slate-100 shadow-xs">
                   <img
                     src={imagePreview}
                     alt="Selected waste photo preview"
                     className="w-full h-48 object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute bottom-0 left-0 right-0 px-3 py-2.5 flex items-center justify-between">
                     <span className="text-white text-xs font-medium truncate max-w-[70%] drop-shadow">
                       {imageFile?.name}
@@ -392,7 +392,7 @@ export default function ReportForm({ user, onSuccess }) {
                       type="button"
                       variant="ghost"
                       onClick={handleRemoveImage}
-                      className="h-7 rounded-lg bg-black/40 backdrop-blur-sm border border-white/10 px-2.5 py-1 text-xs text-white hover:bg-black/60 hover:text-white transition"
+                      className="h-7 rounded-lg bg-black/40 backdrop-blur-sm border border-white/20 px-2.5 py-1 text-xs text-white hover:bg-black/60 hover:text-white transition cursor-pointer"
                     >
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-3 h-3 mr-1">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -405,12 +405,12 @@ export default function ReportForm({ user, onSuccess }) {
             </motion.div>
 
             {/* Submit */}
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="w-full">
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="w-full pt-2">
               <Button
                 id="submit-report-btn"
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full justify-center items-center gap-2 rounded-xl bg-green-600 hover:bg-green-500 text-white shadow-[0_0_20px_rgba(22,163,74,0.3)] transition-all border border-green-400/50 px-4 py-3.5 text-sm font-semibold focus:outline-none focus-visible:ring-green-500 focus-visible:border-green-500 disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full justify-center items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white shadow-md shadow-emerald-600/25 transition-all px-4 py-3.5 text-sm font-semibold focus:outline-none focus-visible:ring-emerald-500 focus-visible:border-emerald-500 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
               >
                 {isSubmitting ? (
                   <>
